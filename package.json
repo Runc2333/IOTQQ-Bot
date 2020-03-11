@@ -1,0 +1,33 @@
+{
+  "name": "qqbot-node-js",
+  "version": "1.0.0",
+  "description": "A QQ Robot written in node.js",
+  "main": "app.js",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "request": "^2.88.2",
+    "socket.io-client": "^2.3.0",
+    "xmlreader": "^0.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Runc2333/QQBot-node.js.git"
+  },
+  "keywords": [
+    "qq",
+    "bot",
+    "iotqq"
+  ],
+  "author": "Runc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Runc2333/QQBot-node.js/issues"
+  },
+  "homepage": "https://github.com/Runc2333/QQBot-node.js#readme"
+}
