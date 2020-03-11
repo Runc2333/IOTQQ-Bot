@@ -2,9 +2,21 @@ const fs = require("fs");
 const config = require("../controller/configReader.js");
 const log = require("../controller/logWriter.js");
 const message = require("../controller/messageApi.js");
+const antispam = require("../controller/antispam.js");
 const groupCommandHandler = require("./commandHandler.js");
 
 function handleTextMsg(packet){
+	if(packet.Content.length > 24){
+		antispam.scanTextMsg(packet.Content, function(result){
+			if(result !== true){
+				message.revoke(packet.FromGroupUin, packet.MsgSeq, packet.MsgRandom);
+				var msg = "您的信息触发了审计规则.详情:\n"+result+".";
+				message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+			}else{
+				//do nothing
+			}
+		});
+	}
 	//获取基本信息
 	var BOT_NAME = config.get("BOT_NAME");
 	//获取正则表达式

@@ -1,5 +1,6 @@
 const request = require("request");
 const config = require("./configReader.js");
+const log = require("./logWriter.js");
 
 function getNickname(qqnum, callback){
 	var postData = {};
@@ -24,6 +25,7 @@ function getNickname(qqnum, callback){
 			callback(nickname);
 		}else{
 			log.write("错误信息: <"+response.Msg+">", "用户信息获取失败", "WARNING");
+			console.log(response);
 			return false;
 		}
 	});

@@ -97,7 +97,11 @@ socket.on("OnGroupMsgs", function(data){
 					});
 				}else{
 					currentMsg.Content = tmp.ReplayContent;
+					currentMsg.SrcContent = tmp.SrcContent;
+					currentMsg.SrcMsgSeq = tmp.MsgSeq;
+					currentMsg.SrcFromUin = tmp.UserID;
 					log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组回复消息", "INFO");
+					superCommandHandler.handle(currentMsg);
 				}
 				break;
 			case "SmallFaceMsg":
@@ -119,15 +123,16 @@ socket.on("OnGroupMsgs", function(data){
 			case "JsonMsg":
 				try{
 					tmp = JSON.parse(currentMsg.Content);
+					var brief = tmp.prompt;
+					var url = tmp.meta.news.jumpUrl;
 				}catch(e){
 					log.write("解析 <JsonMsg> 时出现问题.", "未能解析消息", "ERROR");
+					return false;
 				}
-				var brief = tmp.prompt;
-				var url = tmp.meta.news.jumpUrl;
 				log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+brief, "收到群组JSON消息", "INFO");
 				if(/(x5m.qq.com|mobilex5)/.test(url) === false){
 					message.revoke(currentMsg.FromGroupUin, currentMsg.MsgSeq, currentMsg.MsgRandom);
-					var msg = "抱歉, 您的信息已被撤回.原因: 本群禁止除QQ炫舞官方及本群爆气表外的分享。";
+					var msg = "您的信息触发了审计规则.详情:\n本群禁止除QQ炫舞官方及本群爆气表外的分享.";
 					message.send(currentMsg.FromGroupUin, msg, currentMsg.RequestType, currentMsg.FromUin);
 				}
 				break;
@@ -205,7 +210,7 @@ socket.on("OnEvents", function(data){
 			currentEvent.FromGroupUin = data.CurrentPacket.Data.EventMsg.FromUin;
 			user.getNickname(currentEvent.UserID, function(nickname){
 				log.write("<"+nickname+"> 退出了群聊<"+currentEvent.FromGroupUin+">.", "成员退群", "INFO");
-				var msg = "<"+nickname+"> 退出了群聊, 已永久拉黑.";
+				var msg = "<"+nickname+"> 离开了群聊.";
 				message.send(currentEvent.FromGroupUin, msg);
 			});
 			break;
