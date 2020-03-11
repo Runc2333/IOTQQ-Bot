@@ -29,7 +29,7 @@ function send(to, msg, type = 2, at = 0, groupId = 0){
 		if(response.Ret == 0){
 			log.write("送往: <"+to+">.内容: <"+msg+">", "消息已送达", "INFO");
 		}else{
-			console.log(response);
+			//console.log(response);
 			log.write("错误信息: <"+response.Msg+">", "消息发送失败", "WARNING");
 			return false;
 		}
@@ -59,7 +59,7 @@ function revoke(GroupId, MsgSeq, MsgRandom = 0){
 		if(response.Ret == 0){
 			log.write("群聊: <"+GroupId+">.消息序列号: <"+MsgSeq+">", "消息已撤回", "INFO");
 		}else{
-			console.log(response);
+			//console.log(response);
 			log.write("错误信息: <"+response.Msg+">", "消息撤回失败", "WARNING");
 			return false;
 		}

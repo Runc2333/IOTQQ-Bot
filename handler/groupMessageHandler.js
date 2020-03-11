@@ -43,6 +43,7 @@ function handleTextMsg(packet){
 				const eventHandler = require("../plugins/"+action+".js");
 				eventHandler.handle(packet);
 			}else{
+				console.log(action);
 				log.write("未找到对应的事件处理程序.", "GroupMessageHandler", "WARNING");
 			}
 		});
