@@ -1,0 +1,38 @@
+{
+	"config": [{
+		"BOT_NAME": "机器人的名字",
+		"BOT_QQ_NUM": "机器人的QQ号",
+		"API_ADDRESS": "http://IOTQQ的API地址:端口",
+		"BAIDU_TRANSLATE_APPID": "百度翻译 APPID",
+		"BAIDU_TRANSLATE_KEY": "百度翻译 KEY",
+		"ACCESS_KEY_ID": "阿里云AK ID",
+		"ACCESS_KEY_SECRET": "阿里云AK SECRET",
+		"ENABLE_GROUPS": ["启用的群号01", "启用的群号02"],
+		"GROUP_ADMINS": [{
+			"启用的群号01": ["管理员01", "管理员02", "管理员03"]
+			"启用的群号02": ["管理员01", "管理员02", "管理员03"]
+		}],
+		"MESSAGE_GLOBAL_REGEX": [{
+			"greeting": "/(^{BOT_NAME}$)/",
+			"command": "/(^{BOT_NAME}.+?|.+?{BOT_NAME}$)/",
+			"hitokoto": "/(^一言|一言$|hitokoto)/"
+		}],
+		"MESSAGE_GROUP_REGEX": [{
+			"启用的群号01": [{
+				"自定义的插件01": "/正则表达式 用于匹配聊天内容/"
+			}],
+			"启用的群号02": [{
+				"自定义的插件01": "/正则表达式 用于匹配聊天内容/"
+			}]
+		}],
+		"MESSAGE_OVERWRITE_COMMAND_REGEX": [{
+			"/正则表达式 用于匹配要覆写的指令/": ["发送的字符串", "@的QQ号码"],
+		}],
+		"GROUP_WELCOME": [{
+			"default": "欢迎加入！",
+			"启用的群号01": "欢迎语01",
+			"启用的群号02": "欢迎语02"
+		}],
+		"DEFAULT_GREETING": ["我在", "在", "欸", "在呢", "什么事？", "一直都在"]
+	}]
+}
