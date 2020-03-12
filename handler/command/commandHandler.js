@@ -45,7 +45,7 @@ function handleCommand(command, type, to, at = 0, group = 0){
 			});
 		}
 	}else{
-		var url = encodeURI(`http://api.qingyunke.com/api.php?key=free&appid=0&msg=${command}`);
+		var url = encodeURI(`http://api.tianapi.com/txapi/robot/index?key=${config.get("TIANXING_API_KEY")}&question=${command}&userid=${at}`);
 		request(url, function(e, r, b){
 			if(!e && r.statusCode == 200){
 				try{
@@ -55,7 +55,7 @@ function handleCommand(command, type, to, at = 0, group = 0){
 					log.write("请检查API是否仍然存活.", "公共聊天API", "WARNING");
 					return false;
 				}
-				var msg = response.content.replace(/菲菲/ig, BOT_NAME).replace("{br}", "\n").replace("{face:", "[表情").replace("}", "]");
+				var msg = response.newslist[0].reply.replace(/\{robotname\}/ig, "老人机").replace(/\{appellation\}/ig, "你");
 				message.send(to, msg, type, at, group);
 			}else{
 				log.write("公共API请求失败.", "公共聊天API", "WARNING");

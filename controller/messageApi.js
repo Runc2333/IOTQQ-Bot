@@ -89,6 +89,7 @@ function sendImage(to, picUrl, type = 2, at = 0, groupId = 0){
 		try{
 			var response = JSON.parse(b);
 		}catch(e){
+			console.log(response);
 			console.log(data);
 			log.write("无法解析服务器返回的数据.", "图片发送失败", "WARNING");
 			log.write("请检查后端服务器是否工作正常.", "图片发送失败", "WARNING");
@@ -97,7 +98,8 @@ function sendImage(to, picUrl, type = 2, at = 0, groupId = 0){
 		if(response.Ret == 0){
 			log.write(`送往: <${to}>.图片URL: <${picUrl}>`, "图片已送达", "INFO");
 		}else{
-			//console.log(response);
+			console.log(response);
+			console.log(data);
 			log.write(`错误信息: <${response.Msg}>`, "图片发送失败", "WARNING");
 			return false;
 		}

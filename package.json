@@ -14,7 +14,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node app.js"
+    "run": "node app.js"
   },
   "repository": {
     "type": "git",
