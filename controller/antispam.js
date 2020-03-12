@@ -1,14 +1,14 @@
 const request = require("request");
 const crypto = require("crypto");
 const strandom = require("string-random");
-const config = require("../controller/configReader.js");
-const log = require("../controller/logWriter.js");
+const config = require(`${process.cwd()}/controller/configReader.js`);
+const log = require(`${process.cwd()}/controller/logWriter.js`);
 
 const ACCESS_KEY_ID = config.get("ACCESS_KEY_ID");
 const ACCESS_KEY_SECRET = config.get("ACCESS_KEY_SECRET");
 
 function genSignature(stringToSign){
-	return "acs "+ACCESS_KEY_ID+":"+crypto.createHmac("sha1", ACCESS_KEY_SECRET).update(stringToSign).digest().toString("base64");
+	return `acs ${ACCESS_KEY_ID}:${crypto.createHmac("sha1", ACCESS_KEY_SECRET).update(stringToSign).digest().toString("base64")}`;
 }
 
 function scanTextMsg(msg, callback){
@@ -35,13 +35,13 @@ function scanTextMsg(msg, callback){
 	var signature = [];
 	signature.push("POST\n");
 	signature.push("application/json\n");
-	signature.push(header["Content-MD5"]+"\n");
+	signature.push(`${header["Content-MD5"]}\\n`);
 	signature.push("application/json\n");
-	signature.push(header["Date"]+"\n");
-	signature.push("x-acs-signature-method:"+header["x-acs-signature-method"]+"\n");
-	signature.push("x-acs-signature-nonce:"+header["x-acs-signature-nonce"]+"\n");
-	signature.push("x-acs-signature-version:"+header["x-acs-signature-version"]+"\n");
-	signature.push("x-acs-version:"+header["x-acs-version"]+"\n");
+	signature.push(`${header["Date"]}\\n`);
+	signature.push(`x-acs-signature-method:${header["x-acs-signature-method"]}\\n`);
+	signature.push(`x-acs-signature-nonce:${header["x-acs-signature-nonce"]}\\n`);
+	signature.push(`x-acs-signature-version:${header["x-acs-signature-version"]}\\n`);
+	signature.push(`x-acs-version:${header["x-acs-version"]}\\n`);
 	signature.push("/green/text/scan");
 	stringToSign = signature.join("");
 	//签名
@@ -75,18 +75,18 @@ function scanTextMsg(msg, callback){
 						contraband: "违禁内容",
 						meaningless: "无意义内容",
 					};
-					log.write(reasons[response.data[0].results[0].label]+".", "文本垃圾内容检测结果", "INFO");
+					log.write(`${reasons[response.data[0].results[0].label]}.`, "文本垃圾内容检测结果", "INFO");
 					callback(reasons[response.data[0].results[0].label]);
 				}else{
 					log.write("需要人工判断.", "文本垃圾内容检测结果", "INFO");
 					callback(true);
 				}
 			}catch(e){
-				log.write("错误信息: <"+response.Msg+">", "文本垃圾内容检测失败", "ERROR");
+				log.write(`错误信息: <${response.Msg}>`, "文本垃圾内容检测失败", "ERROR");
 				console.log(b);
 			}
 		}else{
-			log.write("错误信息: <"+response.Msg+">", "文本垃圾内容检测失败", "WARNING");
+			log.write(`错误信息: <${response.Msg}>`, "文本垃圾内容检测失败", "WARNING");
 			console.log(b);
 			return false;
 		}

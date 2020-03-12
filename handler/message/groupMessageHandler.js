@@ -1,16 +1,16 @@
 const fs = require("fs");
-const config = require("../controller/configReader.js");
-const log = require("../controller/logWriter.js");
-const message = require("../controller/messageApi.js");
-const antispam = require("../controller/antispam.js");
-const groupCommandHandler = require("./commandHandler.js");
+const config = require(`${process.cwd()}/controller/configReader.js`);
+const log = require(`${process.cwd()}/controller/logWriter.js`);
+const message = require(`${process.cwd()}/controller/messageApi.js`);
+const antispam = require(`${process.cwd()}/controller/antispam.js`);
+const groupCommandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
 
 function handleTextMsg(packet){
 	if(packet.Content.length > 24){
 		antispam.scanTextMsg(packet.Content, function(result){
 			if(result !== true){
 				message.revoke(packet.FromGroupUin, packet.MsgSeq, packet.MsgRandom);
-				var msg = "您的信息触发了审计规则.详情:\n"+result+".";
+				var msg = `您的信息触发了审计规则.详情:\\n${result}.`;
 				message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
 			}else{
 				//do nothing
@@ -29,30 +29,26 @@ function handleTextMsg(packet){
 	}catch(e){
 		//do nothing
 	}
-	//替换机器人名字
-	for(key in REGEX){
-		REGEX[key] = REGEX[key].replace(/\{BOT_NAME\}/g, BOT_NAME);
-	}
 	//匹配正则表达式
 	var action = null;
 	for(key in REGEX){
-		var regexp = eval(REGEX[key]);
+		var regexp = eval(REGEX[key].replace(/\{BOT_NAME\}/g, BOT_NAME));//替换掉正则表达式*字符串*里的机器人名字 同时转化为正则表达式对象
 		if(regexp.test(packet.Content)){
 			action = key;
 		}
 	}
 	if(action === "command"){
 		log.write("重定向到commandHandler.js处理", "GroupMessageHandler", "INFO");
-		var nameRegexp = eval("/"+BOT_NAME+"/g");
+		var nameRegexp = eval(`/${BOT_NAME}/g`);
 		var command = packet.Content.replace(nameRegexp, "");
 		groupCommandHandler.handleCommand(command, 2, packet.FromGroupUin, packet.FromUin);
 		return;
 	}
 	if(action !== null){
-		fs.exists("./plugins/"+action+".js", function(exists){
+		fs.exists(`${process.cwd()}/plugins/message/${action}.js`, function(exists){
 			if(exists){
-				log.write("重定向到"+action+".js处理", "GroupMessageHandler", "INFO");
-				const eventHandler = require("../plugins/"+action+".js");
+				log.write(`重定向到${action}.js处理`, "GroupMessageHandler", "INFO");
+				const eventHandler = require(`${process.cwd()}/plugins/message/${action}.js`);
 				eventHandler.handle(packet);
 			}else{
 				console.log(action);

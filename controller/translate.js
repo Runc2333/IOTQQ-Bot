@@ -1,7 +1,7 @@
 const request = require("request");
 const crypto = require("crypto");
-const log = require("../controller/logWriter.js");
-const config = require("../controller/configReader.js");
+const log = require(`${process.cwd()}/controller/logWriter.js`);
+const config = require(`${process.cwd()}/controller/configReader.js`);
 
 function translate(source, callback){
 	var from = "auto";
@@ -11,7 +11,7 @@ function translate(source, callback){
 	var key = config.get("BAIDU_TRANSLATE_KEY");
 	var salt = Math.random().toString();
 	var sign = crypto.createHash("md5").update(appid+q+salt+key).digest("hex");
-	var url = encodeURI("http://api.fanyi.baidu.com/api/trans/vip/translate?q="+q+"&from="+from+"&to="+to+"&appid="+appid+"&salt="+salt+"&sign="+sign);
+	var url = encodeURI(`http://api.fanyi.baidu.com/api/trans/vip/translate?q=${q}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`);
 	request(url, function(e, r, b){
 		if(!e && r.statusCode == 200){
 			try{

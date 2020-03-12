@@ -1,227 +1,75 @@
+/* Controller */
 const io = require("socket.io-client");
-const request = require("request");
-const config = require("./controller/configReader.js");
-const log = require("./controller/logWriter.js");
-const message = require("./controller/messageApi.js");
-const user = require("./controller/userApi.js");
-const XMLMessageHandler = require("./handler/XMLMessageHandler.js");
-const groupMessageHandler = require("./handler/groupMessageHandler.js");
-const commandHandler = require("./handler/commandHandler.js");
-const superCommandHandler = require("./handler/superCommandHandler.js");
+const fs = require("fs");
+const config = require(`${process.cwd()}/controller/configReader.js`);
+const log = require(`${process.cwd()}/controller/logWriter.js`);
+/* Events Handler */
+const groupEventHandler = require(`${process.cwd()}/handler/event/groupEvents.js`);
+const friendEventHandler = require(`${process.cwd()}/handler/event/friendEvents.js`);
+const systemEventHandler = require(`${process.cwd()}/handler/event/systemEvents.js`);
+
+log.write("**********************************************", "MAIN THREAD", "INFO");
+log.write("*                QQBot v1.0.0                *", "MAIN THREAD", "INFO");
+log.write("*             Written In Node.js             *", "MAIN THREAD", "INFO");
+log.write("*              Build:2020.03.12              *", "MAIN THREAD", "INFO");
+log.write("*              Author: Runc2333              *", "MAIN THREAD", "INFO");
+log.write("**********************************************", "MAIN THREAD", "INFO");
 
 const API_ADDRESS = config.get("API_ADDRESS");
 const BOT_QQ_NUM = config.get("BOT_QQ_NUM");
+const ENABLE_GROUPS = config.get("ENABLE_GROUPS");
 
 var socket = io(API_ADDRESS, {
     transports: ['websocket']
 });
 
-/*建立连接*/
+/* 建立连接 */
+log.write("正在连接到WebSocket服务器...", "MAIN THREAD", "INFO");
 socket.on("connect",function () {
 	socket.emit("GetWebConn", BOT_QQ_NUM, (data) => {
 		if(data == "OK" || data == "当前已存在活动的WebSocket 已为您切换当前Socket"){
-			log.write("WebSocket连接建立成功.", "WebSocket", "INFO");
+			log.write("WebSocket连接建立成功.", "MAIN THREAD", "INFO");
 		}else{
-			log.write("WebSocket连接建立失败.", "WebSocket", "ERROR");
-			log.write("WebSocket连接建立失败.", "WebSocket", "ERROR");
+			log.write("WebSocket连接建立失败.", "MAIN THREAD", "ERROR");
+			log.write("WebSocket连接建立失败.", "MAIN THREAD", "ERROR");
 			process.exit(true);
 		}
 	});
 });
 
-/*收到群消息*/
+/* 收到群消息 */
 socket.on("OnGroupMsgs", function(data){
-	var currentMsg = {};
-	currentMsg.RequestType = 2;
-	currentMsg.MsgType = data.CurrentPacket.Data.MsgType;
-	currentMsg.MsgSeq = data.CurrentPacket.Data.MsgSeq;
-	currentMsg.MsgRandom = data.CurrentPacket.Data.MsgRandom;
-	currentMsg.FromUin = data.CurrentPacket.Data.FromUserId;
-	currentMsg.FromGroupUin = data.CurrentPacket.Data.FromGroupId;
-	currentMsg.FromGroupName = data.CurrentPacket.Data.FromGroupName;
-	currentMsg.FromNickName = data.CurrentPacket.Data.FromNickName;
-	currentMsg.Content = data.CurrentPacket.Data.Content;
-	if(currentMsg.FromUin != BOT_QQ_NUM){
-		switch(currentMsg.MsgType){
-			case "TextMsg":
-				log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组文字消息", "INFO");
-				groupMessageHandler.handleTextMsg(currentMsg);
-				break;
-			case "PicMsg":
-				try{
-					tmp = JSON.parse(currentMsg.Content);
-				}catch(e){
-					log.write("解析 <PicMsg> 时出现问题.", "未能解析消息", "ERROR");
-				}
-				if(tmp.Content != ""){
-					currentMsg.Content = tmp.Content;
-					log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: [图片]"+currentMsg.Content, "收到群组图文消息", "INFO");
-					groupMessageHandler.handleTextMsg(currentMsg);
-				}else{
-					log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: [图片]", "收到群组图片消息", "INFO");
-				}
-				break;
-			case "AtMsg":
-				try{
-					tmp = JSON.parse(currentMsg.Content);
-				}catch(e){
-					log.write("解析 <AtMsg> 时出现问题.", "未能解析消息", "ERROR");
-				}
-				if(tmp.UserID == BOT_QQ_NUM){
-					user.getNickname(BOT_QQ_NUM, function(nickname){
-						var regexp = eval("/@"+nickname+"/ig");
-						currentMsg.Content = tmp.Content.replace(regexp, "");
-						log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组@消息", "INFO");
-						commandHandler.handleCommand(currentMsg.Content, 2, currentMsg.FromGroupUin, currentMsg.FromUin)
-					});
-				}else{
-					currentMsg.Content = tmp.Content;
-					log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组@消息", "INFO");
-				}
-				break;
-			case "XmlMsg":
-				XMLMessageHandler.handle(currentMsg);
-				break;
-			case "ReplayMsg":
-				try{
-					tmp = JSON.parse(currentMsg.Content);
-				}catch(e){
-					log.write("解析 <ReplayMsg> 时出现问题.", "未能解析消息", "ERROR");
-				}
-				if(tmp.UserID == BOT_QQ_NUM){
-					user.getNickname(BOT_QQ_NUM, function(nickname){
-						var regexp = eval("/@"+nickname+"/ig");
-						currentMsg.Content = tmp.ReplayContent.replace(regexp, "");
-						log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组回复消息", "INFO");
-						commandHandler.handleCommand(currentMsg.Content, 2, currentMsg.FromGroupUin, currentMsg.FromUin)
-					});
-				}else{
-					currentMsg.Content = tmp.ReplayContent;
-					currentMsg.SrcContent = tmp.SrcContent;
-					currentMsg.SrcMsgSeq = tmp.MsgSeq;
-					currentMsg.SrcFromUin = tmp.UserID;
-					log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组回复消息", "INFO");
-					superCommandHandler.handle(currentMsg);
-				}
-				break;
-			case "SmallFaceMsg":
-				try{
-					currentMsg.Content = JSON.parse(currentMsg.Content).Content;
-				}catch(e){
-					log.write("解析 <SmallFaceMsg> 时出现问题.", "未能解析消息", "ERROR");
-				}
-				log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组小表情消息", "INFO");
-				break
-			case "BigFaceMsg":
-				try{
-					currentMsg.Content = JSON.parse(currentMsg.Content).Content;
-				}catch(e){
-					log.write("解析 <BigFaceMsg> 时出现问题.", "未能解析消息", "ERROR");
-				}
-				log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+currentMsg.Content, "收到群组大表情消息", "INFO");
-				break
-			case "JsonMsg":
-				try{
-					tmp = JSON.parse(currentMsg.Content);
-					var brief = tmp.prompt;
-					var url = tmp.meta.news.jumpUrl;
-				}catch(e){
-					log.write("解析 <JsonMsg> 时出现问题.", "未能解析消息", "ERROR");
-					return false;
-				}
-				log.write("<"+currentMsg.FromGroupName+"> - <"+currentMsg.FromNickName+">: "+brief, "收到群组JSON消息", "INFO");
-				if(/(x5m.qq.com|mobilex5)/.test(url) === false){
-					message.revoke(currentMsg.FromGroupUin, currentMsg.MsgSeq, currentMsg.MsgRandom);
-					var msg = "您的信息触发了审计规则.详情:\n本群禁止除QQ炫舞官方及本群爆气表外的分享.";
-					message.send(currentMsg.FromGroupUin, msg, currentMsg.RequestType, currentMsg.FromUin);
-				}
-				break;
-			default:
-				log.write(currentMsg.MsgType, "未知群组消息类型", "INFO");
-				console.log(data);
-				break;
-		}
+	if(ENABLE_GROUPS.indexOf(data.CurrentPacket.Data.FromGroupId.toString()) !== -1){
+		groupEventHandler.handle(data);
 	}
 });
 
-/*收到好友消息*/
+/* 收到好友消息 */
 socket.on("OnFriendMsgs", function(data){
-	var currentMsg = {};
-	currentMsg.MsgType = data.CurrentPacket.Data.MsgType;
-	currentMsg.FromUin = data.CurrentPacket.Data.FromUin;
-	currentMsg.Content = data.CurrentPacket.Data.Content;
-	if(currentMsg.FromUin != BOT_QQ_NUM){
-		switch(currentMsg.MsgType){
-			case "TextMsg":
-				user.getNickname(currentMsg.FromUin, function(nickname){
-						log.write("<"+currentMsg.FromUin+"> - <"+nickname+">: "+currentMsg.Content, "收到私聊消息", "INFO");
-						commandHandler.handleCommand(currentMsg.Content, 1, currentMsg.FromUin, 0);
-				});
-				break;
-			case "TempSessionMsg":
-				currentMsg.TempUin = data.CurrentPacket.Data.TempUin;
-				try{
-					tmp = JSON.parse(data.CurrentPacket.Data.Content);
-					currentMsg.Content = tmp.Content;
-					if(tmp.tips == "[好友图片]"){
-						currentMsg.Content = "[图片]";
-					}
-				}catch(e){
-					currentMsg.Content = data.CurrentPacket.Data.Content;
-				}
-				user.getNickname(currentMsg.FromUin, function(nickname){
-					log.write("<"+currentMsg.FromUin+"> - <"+nickname+">: "+currentMsg.Content, "收到私聊消息", "INFO");
-					commandHandler.handleCommand(currentMsg.Content, 3, currentMsg.FromUin, 0, currentMsg.TempUin);
-				});
-				break;
-			default:
-				log.write(currentMsg.MsgType, "未知私聊消息类型", "INFO");
-				console.log(data);
-				break;
-		}
-	}
+	friendEventHandler.handle(data);
 });
 
-/*通用事件*/
+/* 通用事件 */
 socket.on("OnEvents", function(data){
-	var currentEvent = {};
-	currentEvent.EventName = data.CurrentPacket.Data.EventName;
-	switch(currentEvent.EventName){
-		case "ON_EVENT_GROUP_JOIN":
-			currentEvent.FromGroupUin = data.CurrentPacket.Data.EventMsg.FromUin;
-			currentEvent.FromUin = data.CurrentPacket.Data.EventData.UserID;
-			//获取入群欢迎语
-			var welcome = config.get("GROUP_WELCOME")[0];
-			if(welcome[currentEvent.FromGroupUin] !== undefined && welcome[currentEvent.FromGroupUin] !== null && welcome[currentEvent.FromGroupUin] != ""){
-				var msg = welcome[currentEvent.FromGroupUin];
-			}else{
-				var msg = welcome["default"];
-			}
-			message.send(currentEvent.FromGroupUin, msg, 2,currentEvent.FromUin);
-			break;
-		case "ON_EVENT_GROUP_REVOKE":
-			currentEvent.MsgSeq = data.CurrentPacket.Data.EventData.MsgSeq;
-			currentEvent.UserID = data.CurrentPacket.Data.EventData.UserID;
-			currentEvent.FromGroupUin = data.CurrentPacket.Data.EventMsg.FromUin;
-			log.write("群聊: <"+currentEvent.FromGroupUin+">.成员: <"+currentEvent.UserID+">.消息序列号: <"+currentEvent.MsgSeq+">.", "群消息撤回", "INFO");
-			break;
-		case "ON_EVENT_GROUP_EXIT":
-			currentEvent.UserID = data.CurrentPacket.Data.EventData.UserID;
-			currentEvent.FromGroupUin = data.CurrentPacket.Data.EventMsg.FromUin;
-			user.getNickname(currentEvent.UserID, function(nickname){
-				log.write("<"+nickname+"> 退出了群聊<"+currentEvent.FromGroupUin+">.", "成员退群", "INFO");
-				var msg = "<"+nickname+"> 离开了群聊.";
-				message.send(currentEvent.FromGroupUin, msg);
-			});
-			break;
-		default:
-			log.write(currentEvent.EventName, "未知事件", "INFO");
-			console.log(data);
-			break;
+	if(ENABLE_GROUPS.indexOf(data.CurrentPacket.Data.EventMsg.FromUin.toString()) !== -1){
+		systemEventHandler.handle(data);
 	}
 });
 
-/*程序退出事件*/
+/* 程序退出事件 */
 process.on("exit", (code) => {
 	log.write("正在退出进程...", "进程结束", "INFO");
 });
+
+/* 加载插件 */
+log.write("开始载入插件...", "MAIN THREAD", "INFO");
+var globalPlugins = fs.readdirSync(`${process.cwd()}/plugins/global`);
+for(i=0;i<globalPlugins.length;i++){
+	log.write(`已检测到全局插件: ${globalPlugins[i].split(".")[0]}`, "MAIN THREAD", "INFO");
+	require(`${process.cwd()}/plugins/global/${globalPlugins[i]}`).init();
+}
+var messagePlugins = fs.readdirSync(`${process.cwd()}/plugins/message`);
+for(i=0;i<messagePlugins.length;i++){
+	log.write(`已检测到覆写插件: ${messagePlugins[i].split(".")[0]}`, "MAIN THREAD", "INFO");
+}
+log.write("插件载入完毕.", "MAIN THREAD", "INFO");

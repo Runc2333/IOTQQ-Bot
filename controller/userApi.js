@@ -1,13 +1,13 @@
 const request = require("request");
-const config = require("./configReader.js");
-const log = require("./logWriter.js");
+const config = require(`${process.cwd()}/controller/configReader.js`);
+const log = require(`${process.cwd()}/controller/logWriter.js`);
 
 function getNickname(qqnum, callback){
 	var postData = {};
 	postData.UserID = parseFloat(qqnum);
 	postData = JSON.stringify(postData);
 	request.post({
-		url: config.get("API_ADDRESS")+"/v1/LuaApiCaller?qq="+config.get("BOT_QQ_NUM")+"&funcname=GetUserInfo&timeout=10",
+		url: `${config.get("API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("BOT_QQ_NUM")}&funcname=GetUserInfo&timeout=10`,
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -24,7 +24,7 @@ function getNickname(qqnum, callback){
 			var nickname = response.data.nickname
 			callback(nickname);
 		}else{
-			log.write("错误信息: <"+response.Msg+">", "用户信息获取失败", "WARNING");
+			log.write(`错误信息: <${response.Msg}>`, "用户信息获取失败", "WARNING");
 			console.log(response);
 			return false;
 		}

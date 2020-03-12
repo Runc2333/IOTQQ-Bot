@@ -1,6 +1,6 @@
 const xmlreader = require("xmlreader");
-const message = require("../controller/messageApi.js");
-const log = require("../controller/logWriter.js");
+const message = require(`${process.cwd()}/controller/messageApi.js`);
+const log = require(`${process.cwd()}/controller/logWriter.js`);
 
 function handle(packet){
 	xmlreader.read(packet.Content, function(e, r){
@@ -17,7 +17,7 @@ function handle(packet){
 		}catch(e){
 			var summary = null;
 		}
-		log.write("<"+packet.FromGroupName+"> - <"+packet.FromNickName+">: "+brief, "收到群组XML消息", "INFO");
+		log.write(`<${packet.FromGroupName}> - <${packet.FromNickName}>: ${brief}`, "收到群组XML消息", "INFO");
 		if(summary == "推荐群聊"){
 			message.revoke(packet.FromGroupUin, packet.MsgSeq, packet.MsgRandom);
 			var msg = "您的信息触发了审计规则.详情:\n本群禁止任何类型的群聊推荐.";

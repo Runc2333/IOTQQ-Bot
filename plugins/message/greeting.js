@@ -1,5 +1,5 @@
-const message = require("../controller/messageApi.js");
-const config = require("../controller/configReader.js");
+const message = require(`${process.cwd()}/controller/messageApi.js`);
+const config = require(`${process.cwd()}/controller/configReader.js`);
 //获取打招呼用的语句
 module.exports = {
 	handle: function(packet){

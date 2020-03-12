@@ -1,5 +1,5 @@
 const request = require("request");
-const message = require("../controller/messageApi.js");
+const message = require(`${process.cwd()}/controller/messageApi.js`);
 module.exports = {
 	handle: function(packet){
 		var url = encodeURI("https://v1.hitokoto.cn/");
@@ -12,7 +12,7 @@ module.exports = {
 					log.write("请检查API是否仍然存活.", "HITOKOTO", "WARNING");
 					return false;
 				}
-				var msg = response.hitokoto+" ——"+response.from;
+				var msg = `${response.hitokoto} ——${response.from}`;
 				try{
 					var groupId = packet.groupId;
 				}catch(e){

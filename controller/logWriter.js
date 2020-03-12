@@ -18,19 +18,19 @@ function write(msg, event, level = "INFO"){
 	msg = msg.replace(new RegExp("\\n","gm"), " ");
 	switch(level){
 		case "INFO":
-			var data = "["+time+"] ["+level+"] ["+event+"] : "+msg+"\n";
+			var data = `[${time}] [${level}] [${event}] : ${msg}\\n`;
 			break;
 		case "WARNING":
-			var data = "["+time+"] ["+level+"] ["+event+"] : "+msg+"\n";
+			var data = `[${time}] [${level}] [${event}] : ${msg}\\n`;
 			break;
 		case "ERROR":
-			var data = "["+time+"] ["+level+"] ["+event+"] : "+msg+"\n";
+			var data = `[${time}] [${level}] [${event}] : ${msg}\\n`;
 			break;
 		default:
-			var data = "["+time+"] ["+event+"] ["+level+"] : "+msg+"\n";
+			var data = `[${time}] [${event}] [${level}] : ${msg}\\n`;
 			break;
 	}
-	fs.appendFile("./server.log", data, function(err){
+	fs.appendFile(`${process.cwd()}/server.log`, data, function(err){
 		if(err){
 			console.log("无法写入日志.");
 			process.exit(true);
@@ -47,7 +47,7 @@ function write(msg, event, level = "INFO"){
 			var log = "["+time+"] \033[41;97m["+level+"]\033[0m ["+event+"] : "+msg;
 			break;
 		default:
-			var log = "["+time+"] ["+level+"] ["+event+"] : "+msg;
+			var log = `[${time}] [${level}] [${event}] : ${msg}`;
 			break;
 	}
 	console.log(log);
