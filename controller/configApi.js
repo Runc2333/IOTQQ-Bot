@@ -1,5 +1,5 @@
 const fs = require("fs");
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 
 function get(field){
 	try{

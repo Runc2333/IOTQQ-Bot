@@ -1,8 +1,8 @@
 const fs = require("fs");
 const request = require("request");
-const config = require(`${process.cwd()}/controller/configReader.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
 const message = require(`${process.cwd()}/controller/messageApi.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 
 const BOT_QQ_NUM = config.get("BOT_QQ_NUM");
 

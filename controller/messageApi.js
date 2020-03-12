@@ -1,6 +1,6 @@
 const request = require("request");
-const config = require(`${process.cwd()}/controller/configReader.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 const translate = require(`${process.cwd()}/controller/translate.js`);
 
 function send(to, msg, type = 2, at = 0, groupId = 0){

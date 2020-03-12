@@ -1,8 +1,8 @@
 /* Controller */
 const io = require("socket.io-client");
 const fs = require("fs");
-const config = require(`${process.cwd()}/controller/configReader.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 /* Events Handler */
 const groupEventHandler = require(`${process.cwd()}/handler/event/groupEvents.js`);
 const friendEventHandler = require(`${process.cwd()}/handler/event/friendEvents.js`);

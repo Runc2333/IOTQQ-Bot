@@ -1,6 +1,6 @@
 const request = require("request");
-const config = require(`${process.cwd()}/controller/configReader.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 
 function getNickname(qqnum, callback){
 	var postData = {};

@@ -1,7 +1,7 @@
 const request = require("request");
 const crypto = require("crypto");
-const log = require(`${process.cwd()}/controller/logWriter.js`);
-const config = require(`${process.cwd()}/controller/configReader.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
 
 function translate(source, callback){
 	var from = "auto";

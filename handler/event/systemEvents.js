@@ -1,6 +1,6 @@
 /* Controller */
-const config = require(`${process.cwd()}/controller/configReader.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 const message = require(`${process.cwd()}/controller/messageApi.js`);
 const user = require(`${process.cwd()}/controller/userApi.js`);
 /* Message Handler */

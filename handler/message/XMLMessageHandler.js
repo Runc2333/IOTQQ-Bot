@@ -1,6 +1,6 @@
 const xmlreader = require("xmlreader");
 const message = require(`${process.cwd()}/controller/messageApi.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 
 function handle(packet){
 	xmlreader.read(packet.Content, function(e, r){

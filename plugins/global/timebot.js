@@ -1,6 +1,6 @@
 const message = require(`${process.cwd()}/controller/messageApi.js`);
-const config = require(`${process.cwd()}/controller/configReader.js`);
-const log = require(`${process.cwd()}/controller/logWriter.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
 
 const TIMEBOT_IMAGES = config.get("TIMEBOT_IMAGES");
 const ENABLE_TIMEBOT_GROUP = config.get("ENABLE_TIMEBOT_GROUP");

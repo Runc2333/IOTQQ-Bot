@@ -1,8 +1,8 @@
 const request = require("request");
 const crypto = require("crypto");
 const strandom = require("string-random");
-const config = require("../controller/configReader.js");
-const log = require("../controller/logWriter.js");
+const config = require("../controller/configApi.js");
+const log = require("../controller/logger.js");
 
 const ACCESS_KEY_ID = config.get("ACCESS_KEY_ID");
 const ACCESS_KEY_SECRET = config.get("ACCESS_KEY_SECRET");
