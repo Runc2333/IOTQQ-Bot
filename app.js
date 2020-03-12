@@ -15,9 +15,9 @@ log.write("*              Build:2020.03.12              *", "MAIN THREAD", "INFO
 log.write("*              Author: Runc2333              *", "MAIN THREAD", "INFO");
 log.write("**********************************************", "MAIN THREAD", "INFO");
 
-const API_ADDRESS = config.get("API_ADDRESS");
-const BOT_QQ_NUM = config.get("BOT_QQ_NUM");
-const ENABLE_GROUPS = config.get("ENABLE_GROUPS");
+const API_ADDRESS = config.get("global", "API_ADDRESS");
+const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
+const ENABLE_GROUPS = config.get("global", "ENABLE_GROUPS");
 
 var socket = io(API_ADDRESS, {
     transports: ['websocket']
@@ -71,5 +71,6 @@ for(i=0;i<globalPlugins.length;i++){
 var messagePlugins = fs.readdirSync(`${process.cwd()}/plugins/message`);
 for(i=0;i<messagePlugins.length;i++){
 	log.write(`已检测到覆写插件: ${messagePlugins[i].split(".")[0]}`, "MAIN THREAD", "INFO");
+	require(`${process.cwd()}/plugins/message/${messagePlugins[i]}`).init();
 }
 log.write("插件载入完毕.", "MAIN THREAD", "INFO");

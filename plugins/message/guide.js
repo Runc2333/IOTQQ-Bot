@@ -1,5 +1,10 @@
 const message = require(`${process.cwd()}/controller/messageApi.js`);
+const log = require(`${process.cwd()}/controller/logger.js`);
+
 module.exports = {
+	init: function () {
+		log.write("guide.js已加载, 这是一个手动插件, 不会自动注册.", "GUIDE", "INFO");
+	},
 	handle: function(packet){
 		var msg = "\n在线爆点查询地址: mobilex5.com\n使用说明: mobilex5.com/document";
 		if(packet.RequestType == 2){

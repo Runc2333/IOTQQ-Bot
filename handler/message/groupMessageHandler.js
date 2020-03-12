@@ -18,13 +18,13 @@ function handleTextMsg(packet){
 		});
 	}
 	//获取基本信息
-	var BOT_NAME = config.get("BOT_NAME");
+	var BOT_NAME = config.get("global", "BOT_NAME");
 	//获取正则表达式
-	var REGEX = config.get("MESSAGE_GLOBAL_REGEX")[0];
-	var GROUP_REGEX = config.get("MESSAGE_GROUP_REGEX");
+	var REGEX = config.get("global", "MESSAGE_GLOBAL_REGEX");
+	var GROUP_REGEX = config.get("global", "MESSAGE_GROUP_REGEX");
 	try{
-		if(GROUP_REGEX[0][packet.FromGroupUin.toString()][0] !== undefined){
-			Object.assign(REGEX, GROUP_REGEX[0][packet.FromGroupUin.toString()][0]);
+		if(GROUP_REGEX[packet.FromGroupUin.toString()] !== undefined){
+			Object.assign(REGEX, GROUP_REGEX[packet.FromGroupUin.toString()]);
 		}
 	}catch(e){
 		//do nothing

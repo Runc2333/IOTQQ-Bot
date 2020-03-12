@@ -10,7 +10,7 @@ const XMLMessageHandler = require(`${process.cwd()}/handler/message/XMLMessageHa
 const commandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
 const superCommandHandler = require(`${process.cwd()}/handler/command/superCommandHandler.js`);
 
-const BOT_QQ_NUM = config.get("BOT_QQ_NUM");
+const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
 
 function handle(data){
     var currentMsg = {};

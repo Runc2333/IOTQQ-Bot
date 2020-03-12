@@ -4,13 +4,13 @@ const config = require(`${process.cwd()}/controller/configApi.js`);
 const message = require(`${process.cwd()}/controller/messageApi.js`);
 const log = require(`${process.cwd()}/controller/logger.js`);
 
-const BOT_QQ_NUM = config.get("BOT_QQ_NUM");
+const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
 
 function handleCommand(command, type, to, at = 0, group = 0){
 	//获取基本信息
-	var BOT_NAME = config.get("BOT_NAME");
+	var BOT_NAME = config.get("global", "BOT_NAME");
 	//获取正则表达式
-	var REGEX = config.get("MESSAGE_OVERWRITE_COMMAND_REGEX")[0];
+	var REGEX = config.get("global", "MESSAGE_OVERWRITE_COMMAND_REGEX");
 	var length = 0;
 	for(tmp in REGEX){
 		length++;
@@ -20,16 +20,16 @@ function handleCommand(command, type, to, at = 0, group = 0){
 		for(key in REGEX){
 			var regexp = eval(key.replace(/\{BOT_NAME\}/g, BOT_NAME));//替换掉正则表达式*字符串*里的机器人名字 同时转化为正则表达式对象
 			if(regexp.test(command)){
-				data.msg = REGEX[key][0];
-				data.at = REGEX[key][1];
+				data.msg = REGEX[key].msg;
+				data.at = REGEX[key].at;
 			}
 		}
 	}
 	if(data.msg !== null && data.msg !== undefined){
 		if(/^@.+/.test(data.msg) === false){
-			message.send(to, data.msg, type, data.at);
+			message.send(to, data.msg, type, data.at);//普通消息 直接发送
 		}else{
-			var action = data.msg.replace(/^@/, "");
+			var action = data.msg.replace(/^@/, "");//以@开头 转发给对应的插件处理
 			var packet = {};
 			packet.FromGroupUin = to;
 			packet.RequestType = type;
@@ -45,7 +45,7 @@ function handleCommand(command, type, to, at = 0, group = 0){
 			});
 		}
 	}else{
-		var url = encodeURI(`http://api.tianapi.com/txapi/robot/index?key=${config.get("TIANXING_API_KEY")}&question=${command}&userid=${at}`);
+		var url = encodeURI(`http://api.tianapi.com/txapi/robot/index?key=${config.get("global", "TIANXING_API_KEY")}&question=${command}&userid=${at}`);
 		request(url, function(e, r, b){
 			if(!e && r.statusCode == 200){
 				try{

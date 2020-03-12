@@ -1,6 +1,12 @@
 const request = require("request");
 const message = require(`${process.cwd()}/controller/messageApi.js`);
+const config = require(`${process.cwd()}/controller/configApi.js`);
+
 module.exports = {
+	init: function () {
+		config.registerPlugin("global", "/(^一言|一言$|hitokoto)/", "greeting");
+		config.registerPlugin("command", "/(^一言|一言$|hitokoto)/", "greeting");
+	},
 	handle: function(packet){
 		var url = encodeURI("https://v1.hitokoto.cn/");
 		request(url, function(e, r, b){

@@ -7,7 +7,7 @@ function getNickname(qqnum, callback){
 	postData.UserID = parseFloat(qqnum);
 	postData = JSON.stringify(postData);
 	request.post({
-		url: `${config.get("API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("BOT_QQ_NUM")}&funcname=GetUserInfo&timeout=10`,
+		url: `${config.get("global", "API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("global", "BOT_QQ_NUM")}&funcname=GetUserInfo&timeout=10`,
 		headers: {
 			"Content-Type": "application/json",
 		},

@@ -4,8 +4,8 @@ const strandom = require("string-random");
 const config = require("../controller/configApi.js");
 const log = require("../controller/logger.js");
 
-const ACCESS_KEY_ID = config.get("ACCESS_KEY_ID");
-const ACCESS_KEY_SECRET = config.get("ACCESS_KEY_SECRET");
+const ACCESS_KEY_ID = config.get("global", "ACCESS_KEY_ID");
+const ACCESS_KEY_SECRET = config.get("global", "ACCESS_KEY_SECRET");
 
 function genSignature(stringToSign){
 	return "acs "+ACCESS_KEY_ID+":"+crypto.createHmac("sha1", ACCESS_KEY_SECRET).update(stringToSign).digest().toString("base64");

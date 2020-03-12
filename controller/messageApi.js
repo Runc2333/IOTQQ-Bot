@@ -13,7 +13,7 @@ function send(to, msg, type = 2, at = 0, groupId = 0){
 	data.atUser = parseFloat(at);
 	data = JSON.stringify(data);
 	request.post({
-		url: `${config.get("API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("BOT_QQ_NUM")}&funcname=SendMsg&timeout=10`,
+		url: `${config.get("global", "API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("global", "BOT_QQ_NUM")}&funcname=SendMsg&timeout=10`,
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -43,7 +43,7 @@ function revoke(GroupId, MsgSeq, MsgRandom = 0){
 	data.MsgRandom = parseFloat(MsgRandom);
 	data = JSON.stringify(data);
 	request.post({
-		url: `${config.get("API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("BOT_QQ_NUM")}&funcname=RevokeMsg&timeout=10`,
+		url: `${config.get("global", "API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("global", "BOT_QQ_NUM")}&funcname=RevokeMsg&timeout=10`,
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -80,7 +80,7 @@ function sendImage(to, picUrl, type = 2, at = 0, groupId = 0){
 	data.fileMd5 = "";
 	data = JSON.stringify(data);
 	request.post({
-		url: `${config.get("API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("BOT_QQ_NUM")}&funcname=SendMsg&timeout=10`,
+		url: `${config.get("global", "API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("global", "BOT_QQ_NUM")}&funcname=SendMsg&timeout=10`,
 		headers: {
 			"Content-Type": "application/json",
 		},

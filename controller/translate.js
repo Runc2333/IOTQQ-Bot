@@ -7,8 +7,8 @@ function translate(source, callback){
 	var from = "auto";
 	var to = "en";
 	var q = source;
-	var appid = config.get("BAIDU_TRANSLATE_APPID");
-	var key = config.get("BAIDU_TRANSLATE_KEY");
+	var appid = config.get("global", "BAIDU_TRANSLATE_APPID");
+	var key = config.get("global", "BAIDU_TRANSLATE_KEY");
 	var salt = Math.random().toString();
 	var sign = crypto.createHash("md5").update(appid+q+salt+key).digest("hex");
 	var url = encodeURI(`http://api.fanyi.baidu.com/api/trans/vip/translate?q=${q}&from=${from}&to=${to}&appid=${appid}&salt=${salt}&sign=${sign}`);
