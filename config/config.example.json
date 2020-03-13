@@ -14,7 +14,10 @@
 			"启用的群号01": ["管理员01", "管理员02", "管理员03"],
 			"启用的群号02": ["管理员01", "管理员02", "管理员03"]
 		},
-		"MESSAGE_GLOBAL_REGEX": {},
+		"MESSAGE_GLOBAL_REGEX": {
+			"command": "/(^{BOT_NAME}.+?|.+?{BOT_NAME}$)/",
+			"superCommand": "/^\\/[a-z]{2,10}/i"
+		},
 		"MESSAGE_GROUP_REGEX": {
 			"启用的群号01": {
 				"自定义的插件01": "/正则表达式 用于匹配聊天内容/"
