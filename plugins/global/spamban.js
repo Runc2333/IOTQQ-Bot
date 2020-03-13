@@ -9,8 +9,8 @@ const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`)
 function init() {
     config.registerSuperCommand("spamban", "spamban.js", "spamban", "举报消息, 需要回复一条消息.管理员使用时将跳过检测直接封禁.");
     config.registerSuperCommand("sb", "spamban.js", "spamban", "/spamban的简写.等效于/spamban.");
-    config.registerSuperCommand("mute", "spamban.js", "mute", "禁言, 需要回复一条消息.仅管理员可用.\n<period>: 禁言时长(分钟)", "<period>");
-    config.registerSuperCommand("m", "spamban.js", "mute", "/mute的简写.等效于/mute.\n<period>: 禁言时长(分钟)", "<period>");
+    config.registerSuperCommand("mute", "spamban.js", "mute", "禁言, 需要回复一条消息.仅管理员可用.\n[period]: 禁言时长(分钟)", "[period]");
+    config.registerSuperCommand("m", "spamban.js", "mute", "/mute的简写.等效于/mute.\n[period]: 禁言时长(分钟)", "[period]");
     // config.registerSuperCommand("kick", "spamban.js", "kick", "踢出, 需要回复一条消息.仅管理员可用.");
     // config.registerSuperCommand("k", "spamban.js", "kick", "/kick的简写.等效于/kick.");
 }
