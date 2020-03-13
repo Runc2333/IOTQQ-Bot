@@ -1,15 +1,21 @@
 # QQBot-node.js
 
 ## Installation
-Clone this repository to your local disk.
+1. Clone this repository to your local disk.
 
-`git clone https://github.com/Runc2333/QQBot-node.js.git`
+```
+git clone https://github.com/Runc2333/QQBot-node.js.git
+```
 
-Install dependence
+2. Install dependence
 
-`npm install`
+```
+cd QQBot-node.js
 
-Edit the config provided in config/config.example.json.Then rename it into config.json
+npm install
+```
+
+3. Edit the config provided in config/config.example.json.Then rename it into config.json
 
 ```
 vi config/config.example.json
@@ -17,6 +23,8 @@ vi config/config.example.json
 mv config/config.example.json config/config.json
 ```
 
-Run & Enjoy!
+4. Run & Enjoy!
 
-`node app.js`
+```
+node app.js
+```
