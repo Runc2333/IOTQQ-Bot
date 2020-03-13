@@ -9,6 +9,7 @@
 		"ACCESS_KEY_SECRET": "阿里云AK SECRET",
 		"TIANXING_API_KEY": "天行数据API KEY 需要去申请天行机器人API",
 		"ENABLE_GROUPS": ["启用的群号01", "启用的群号02"],
+		"SUPER_COMMAND_REGISTRY": {},
 		"GROUP_ADMINS": {
 			"启用的群号01": ["管理员01", "管理员02", "管理员03"],
 			"启用的群号02": ["管理员01", "管理员02", "管理员03"]
