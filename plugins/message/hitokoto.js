@@ -1,6 +1,6 @@
 const request = require("request");
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const config = require(`${process.cwd()}/controller/configApi.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
 
 module.exports = {
 	init: function () {

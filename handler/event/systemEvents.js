@@ -1,14 +1,14 @@
 /* Controller */
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const user = require(`${process.cwd()}/controller/userApi.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const user = require(`${process.cwd().replace(/\\/g, "/")}/controller/userApi.js`);
 /* Message Handler */
-const groupMessageHandler = require(`${process.cwd()}/handler/message/groupMessageHandler.js`);
-const XMLMessageHandler = require(`${process.cwd()}/handler/message/XMLMessageHandler.js`);
+const groupMessageHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/message/groupMessageHandler.js`);
+const XMLMessageHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/message/XMLMessageHandler.js`);
 /* Command Handler */
-const commandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
-const superCommandHandler = require(`${process.cwd()}/handler/command/superCommandHandler.js`);
+const commandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/commandHandler.js`);
+const superCommandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/superCommandHandler.js`);
 
 const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
 
@@ -40,6 +40,10 @@ function handle(data){
                 var msg = `<${nickname}> 离开了群聊.`;
                 message.send(currentEvent.FromGroupUin, msg);
             });
+            break;
+        case "ON_EVENT_GROUP_SHUT":
+            log.write(`群聊<${currentEvent.FromGroupUin}> - 用户: <${data.CurrentPacket.EventData.UserID}> 被禁言 <${data.CurrentPacket.EventData.ShutTime}> 秒.`, "成员禁言", "INFO")
+            console.log(JSON.stringify(data, "", "\s"))
             break;
         default:
             log.write(currentEvent.EventName, "未知事件", "INFO");

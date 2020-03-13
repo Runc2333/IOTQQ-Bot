@@ -1,14 +1,15 @@
 /* Controller */
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const user = require(`${process.cwd()}/controller/userApi.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const user = require(`${process.cwd().replace(/\\/g, "/")}/controller/userApi.js`);
+const database = require(`${process.cwd().replace(/\\/g, "/")}/controller/database.js`);
 /* Message Handler */
-const groupMessageHandler = require(`${process.cwd()}/handler/message/groupMessageHandler.js`);
-const XMLMessageHandler = require(`${process.cwd()}/handler/message/XMLMessageHandler.js`);
+const groupMessageHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/message/groupMessageHandler.js`);
+const XMLMessageHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/message/XMLMessageHandler.js`);
 /* Command Handler */
-const commandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
-const superCommandHandler = require(`${process.cwd()}/handler/command/superCommandHandler.js`);
+const commandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/commandHandler.js`);
+const superCommandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/superCommandHandler.js`);
 
 const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
 

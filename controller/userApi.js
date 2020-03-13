@@ -1,6 +1,6 @@
 const request = require("request");
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
 
 function getNickname(qqnum, callback){
 	var postData = {};
@@ -47,10 +47,14 @@ function isAdmin(qqnum, group = 0) {
 			return false;
 		}
 	}
-	
+}
+
+function genGroupUserList() {
+
 }
 
 module.exports = {
 	getNickname,
-	isAdmin
-}
+	isAdmin,
+	genGroupUserList
+};

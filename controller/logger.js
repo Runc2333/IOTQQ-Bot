@@ -30,7 +30,7 @@ function write(msg, event, level = "INFO"){
 			var data = `[${time}] [${event}] [${level}] : ${msg}\n`;
 			break;
 	}
-	fs.appendFileSync(`${process.cwd()}/server.log`, data, function(err){
+	fs.appendFileSync(`${process.cwd().replace(/\\/g, "/")}/server.log`, data, function(err){
 		if(err){
 			console.log("无法写入日志.");
 			process.exit(true);

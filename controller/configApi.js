@@ -1,7 +1,7 @@
 const fs = require("fs");
-const log = require(`${process.cwd()}/controller/logger.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
 
-const configFilePath = `${process.cwd()}/config/config.json`;
+const configFilePath = `${process.cwd().replace(/\\/g, "/")}/config/config.json`;
 
 function readFileConfigIntoObject() {
 	try {
@@ -12,7 +12,7 @@ function readFileConfigIntoObject() {
 		process.exit(true);
 	}
 	try {
-		var configObject = JSON.parse(configFile.toString())
+		var configObject = JSON.parse(configFile.toString());
 	} catch (e) {
 		log.write("Unable to decode config/config.json!", "Config API", "ERROR");
 		log.write("Please check your JSON syntax.", "Config API", "ERROR");
@@ -93,10 +93,12 @@ function registerGroupPlugin(group, regex, handler) {
 	log.write(`插件<${handler}>已注册到群组<${group}>.`, "Config API", "INFO");
 }
 
+write("global", {}, "SUPER_COMMAND_REGISTRY");
+
 module.exports = {
 	get,
 	write,
 	registerPlugin,
 	registerSuperCommand,
 	registerGroupPlugin
-}
+};

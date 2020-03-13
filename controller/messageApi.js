@@ -1,7 +1,8 @@
 const request = require("sync-request");
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
-const translate = require(`${process.cwd()}/controller/translate.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
+const translate = require(`${process.cwd().replace(/\\/g, "/")}/controller/translate.js`);
+const database = require(`${process.cwd().replace(/\\/g, "/")}/controller/database.js`);
 
 function send(to, msg, type = 2, at = 0, groupId = 0) {
 	var data = {};
@@ -33,6 +34,12 @@ function send(to, msg, type = 2, at = 0, groupId = 0) {
 }
 
 function revoke(GroupId, MsgSeq, MsgRandom = 0) {
+	if (MsgRandom === 0) {
+		var tmp = database.getMessageBySeqAndGuin(MsgSeq, GroupId).random;
+		if (tmp !== false) {
+			MsgRandom = tmp;
+		}
+	}
 	var data = {};
 	data.GroupID = parseFloat(GroupId);
 	data.MsgSeq = parseFloat(MsgSeq);
@@ -52,14 +59,16 @@ function revoke(GroupId, MsgSeq, MsgRandom = 0) {
 	}
 	if (response.Ret == 0) {
 		log.write(`群聊: <${GroupId}>.消息序列号: <${MsgSeq}>`, "消息已撤回", "INFO");
+		send(GroupId, "[消息撤回] Sequency: <${MsgSeq}>.");
 	} else {
 		console.log(res.getBody("utf8"));
 		log.write(`错误信息: <${response.Msg}>`, "消息撤回失败", "WARNING");
+		send(GroupId, "[消息撤回失败] Sequency: <${MsgSeq}>.");
 		return false;
 	}
 }
 
-function sendImage(to, picUrl, type = 2, at = 0, groupId = 0){
+function sendImage(to, picUrl, type = 2, at = 0, groupId = 0) {
 	var data = {};
 	data.toUser = parseFloat(to);
 	data.sendToType = parseFloat(type);
@@ -98,7 +107,6 @@ function mute(groupId, user, time) {
 	data.GroupID = parseFloat(groupId);
 	data.ShutUpUserID = parseFloat(user);
 	data.ShutTime = parseFloat(time);
-	console.log(data);
 	// data = JSON.stringify(data);
 	var url = `${config.get("global", "API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("global", "BOT_QQ_NUM")}&funcname=OidbSvc.0x570_8&timeout=10`;
 	var res = request("POST", url, {

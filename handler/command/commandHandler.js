@@ -1,10 +1,8 @@
 const fs = require("fs");
 const request = require("request");
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
-
-const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
 
 function handleCommand(command, type, to, at = 0, group = 0){
 	//获取基本信息
@@ -12,12 +10,12 @@ function handleCommand(command, type, to, at = 0, group = 0){
 	//获取正则表达式
 	var REGEX = config.get("global", "MESSAGE_OVERWRITE_COMMAND_REGEX");
 	var length = 0;
-	for(tmp in REGEX){
+	for(var tmp in REGEX){
 		length++;
 	}
 	var data = {};
 	if(length > 0){
-		for(key in REGEX){
+		for(var key in REGEX){
 			var regexp = eval(key.replace(/\{BOT_NAME\}/g, BOT_NAME));//替换掉正则表达式*字符串*里的机器人名字 同时转化为正则表达式对象
 			if(regexp.test(command)){
 				data.msg = REGEX[key].msg;
@@ -34,10 +32,10 @@ function handleCommand(command, type, to, at = 0, group = 0){
 			packet.FromGroupUin = to;
 			packet.RequestType = type;
 			packet.groupId = group;
-			fs.exists(`${process.cwd()}/plugins/message/${action}.js`, function(exists){
+			fs.exists(`${process.cwd().replace(/\\/g, "/")}/plugins/message/${action}.js`, function(exists){
 				if(exists){
 					log.write(`重定向到${action}.js处理`, "CommandHandler", "INFO");
-					const eventHandler = require(`${process.cwd()}/plugins/message/${action}.js`);
+					const eventHandler = require(`${process.cwd().replace(/\\/g, "/")}/plugins/message/${action}.js`);
 					eventHandler.handle(packet);
 				}else{
 					log.write("未找到对应的事件处理程序.", "CommandHandler", "WARNING");
@@ -47,7 +45,7 @@ function handleCommand(command, type, to, at = 0, group = 0){
 	}else{
 		var url = encodeURI(`http://api.tianapi.com/txapi/robot/index?key=${config.get("global", "TIANXING_API_KEY")}&question=${command}&userid=${at}`);
 		request(url, function(e, r, b){
-			if(!e && r.statusCode == 200){
+			if (!e && r.statusCode == 200) {
 				try{
 					var response = JSON.parse(b);
 				}catch(e){
@@ -68,4 +66,4 @@ function handleCommand(command, type, to, at = 0, group = 0){
 
 module.exports = {
 	handleCommand
-}
+};

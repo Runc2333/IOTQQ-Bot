@@ -1,6 +1,7 @@
 const xmlreader = require("xmlreader");
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
+const database = require(`${process.cwd().replace(/\\/g, "/")}/controller/database.js`);
 
 function handle(packet){
 	xmlreader.read(packet.Content, function(e, r){
@@ -17,6 +18,7 @@ function handle(packet){
 		}catch(e){
 			var summary = null;
 		}
+		database.saveMessage(packet.FromUin, packet.FromGroupUin, brief, packet.MsgSeq, packet.MsgRandom);
 		log.write(`<${packet.FromGroupName}> - <${packet.FromNickName}>: ${brief}`, "收到群组XML消息", "INFO");
 		if(summary == "推荐群聊"){
 			message.revoke(packet.FromGroupUin, packet.MsgSeq, packet.MsgRandom);

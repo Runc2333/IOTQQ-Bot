@@ -16,7 +16,7 @@
 		},
 		"MESSAGE_GLOBAL_REGEX": {
 			"command": "/(^{BOT_NAME}.+?|.+?{BOT_NAME}$)/",
-			"superCommand": "/^\\/[a-z]{2,10}/i"
+			"superCommand": "/^\\/[a-z]{1,10}/i"
 		},
 		"MESSAGE_GROUP_REGEX": {
 			"启用的群号01": {

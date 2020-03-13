@@ -1,14 +1,15 @@
 /* Controller */
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const user = require(`${process.cwd()}/controller/userApi.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const user = require(`${process.cwd().replace(/\\/g, "/")}/controller/userApi.js`);
+const database = require(`${process.cwd().replace(/\\/g, "/")}/controller/database.js`);
 /* Message Handler */
-const groupMessageHandler = require(`${process.cwd()}/handler/message/groupMessageHandler.js`);
-const XMLMessageHandler = require(`${process.cwd()}/handler/message/XMLMessageHandler.js`);
+const groupMessageHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/message/groupMessageHandler.js`);
+const XMLMessageHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/message/XMLMessageHandler.js`);
 /* Command Handler */
-const commandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
-const superCommandHandler = require(`${process.cwd()}/handler/command/superCommandHandler.js`);
+const commandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/commandHandler.js`);
+const superCommandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/superCommandHandler.js`);
 
 const BOT_QQ_NUM = config.get("global", "BOT_QQ_NUM");
 
@@ -41,6 +42,7 @@ function handle(data){
 					groupMessageHandler.handleTextMsg(currentMsg);
 				}else{
 					log.write(`<${currentMsg.FromGroupName}> - <${currentMsg.FromNickName}>: [图片]`, "收到群组图片消息", "INFO");
+					database.saveMessage(currentMsg.FromUin, currentMsg.FromGroupUin, "[图片]", currentMsg.MsgSeq, currentMsg.MsgRandom);
 				}
 				break;
 			case "AtMsg":
@@ -60,6 +62,7 @@ function handle(data){
 				}else{
 					currentMsg.Content = tmp.Content;
 					log.write(`<${currentMsg.FromGroupName}> - <${currentMsg.FromNickName}>: ${currentMsg.Content}`, "收到群组@消息", "INFO");
+					database.saveMessage(currentMsg.FromUin, currentMsg.FromGroupUin, currentMsg.Content, currentMsg.MsgSeq, currentMsg.MsgRandom);
 				}
 				break;
 			case "XmlMsg":
@@ -92,16 +95,20 @@ function handle(data){
 					currentMsg.Content = JSON.parse(currentMsg.Content).Content;
 				}catch(e){
 					log.write("解析 <SmallFaceMsg> 时出现问题.", "未能解析消息", "ERROR");
+					return false;
 				}
 				log.write(`<${currentMsg.FromGroupName}> - <${currentMsg.FromNickName}>: ${currentMsg.Content}`, "收到群组小表情消息", "INFO");
+				database.saveMessage(currentMsg.FromUin, currentMsg.FromGroupUin, currentMsg.Content, currentMsg.MsgSeq, currentMsg.MsgRandom);
 				break
 			case "BigFaceMsg":
 				try{
 					currentMsg.Content = JSON.parse(currentMsg.Content).Content;
 				}catch(e){
 					log.write("解析 <BigFaceMsg> 时出现问题.", "未能解析消息", "ERROR");
+					return false;
 				}
 				log.write(`<${currentMsg.FromGroupName}> - <${currentMsg.FromNickName}>: ${currentMsg.Content}`, "收到群组大表情消息", "INFO");
+				database.saveMessage(currentMsg.FromUin, currentMsg.FromGroupUin, currentMsg.Content, currentMsg.MsgSeq, currentMsg.MsgRandom);
 				break
 			case "JsonMsg":
 				try{
@@ -112,6 +119,7 @@ function handle(data){
 					log.write("解析 <JsonMsg> 时出现问题.", "未能解析消息", "ERROR");
 					return false;
 				}
+				database.saveMessage(currentMsg.FromUin, currentMsg.FromGroupUin, brief, currentMsg.MsgSeq, currentMsg.MsgRandom);
 				log.write(`<${currentMsg.FromGroupName}> - <${currentMsg.FromNickName}>: ${brief}`, "收到群组JSON消息", "INFO");
 				if(/(x5m\.qq\.com|mobilex5)/.test(url) === false){
 					message.revoke(currentMsg.FromGroupUin, currentMsg.MsgSeq, currentMsg.MsgRandom);

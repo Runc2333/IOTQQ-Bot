@@ -1,25 +1,29 @@
 const request = require("request");
 const crypto = require("crypto");
 const strandom = require("string-random");
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const user = require(`${process.cwd()}/controller/userApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const user = require(`${process.cwd().replace(/\\/g, "/")}/controller/userApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
 
 function init() {
-    config.registerSuperCommand("spamban", "spamban.js", "spamban", "反垃圾信息模块.回复你想检测的消息, 系统将检测消息内容并执行对应操作.");
-    config.registerSuperCommand("sb", "spamban.js", "spamban", "/spamban的别名.功能与/spamban相同.");
+    config.registerSuperCommand("spamban", "spamban.js", "spamban", "举报消息, 需要回复一条消息.管理员使用时将跳过检测直接封禁.");
+    config.registerSuperCommand("sb", "spamban.js", "spamban", "/spamban的简写.等效于/spamban.");
+    config.registerSuperCommand("mute", "spamban.js", "mute", "禁言, 需要回复一条消息.仅管理员可用.\n<period>: 禁言时长(分钟)", "<period>");
+    config.registerSuperCommand("m", "spamban.js", "mute", "/mute的简写.等效于/mute.\n<period>: 禁言时长(分钟)", "<period>");
+    // config.registerSuperCommand("kick", "spamban.js", "kick", "踢出, 需要回复一条消息.仅管理员可用.");
+    // config.registerSuperCommand("k", "spamban.js", "kick", "/kick的简写.等效于/kick.");
 }
 
 function spamban(packet) {
     if (packet.SrcMsgSeq === undefined) {
-        var msg = "[消息审计] 请使用此指令回复一条消息.";
+        var msg = "请使用此指令回复一条消息.";
         message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
         return false;
     }
     if (user.isAdmin(packet.FromUin, packet.FromGroupUin)) {
         message.revoke(packet.FromGroupUin, packet.SrcMsgSeq, 0);
-        message.mute(packet.FromGroupUin, packet.SrcFromUin, 10);
+        message.mute(packet.FromGroupUin, packet.SrcFromUin, 60);
         var msg = `您的信息触发了审计规则.详情:\n管理员觉得你不行.`;
         message.send(packet.FromGroupUin, msg, packet.RequestType, packet.SrcFromUin);
     } else {
@@ -28,7 +32,7 @@ function spamban(packet) {
         scanTextMsg(packet.SrcContent, function (result) {
             if (result !== true) {
                 message.revoke(packet.FromGroupUin, packet.SrcMsgSeq, 0);
-                message.mute(packet.FromGroupUin, packet.SrcFromUin, 10);
+                message.mute(packet.FromGroupUin, packet.SrcFromUin, 60);
                 var msg = `您的信息触发了审计规则.详情:\n${result}.`;
                 message.send(packet.FromGroupUin, msg, packet.RequestType, packet.SrcFromUin);
             } else {
@@ -36,6 +40,30 @@ function spamban(packet) {
                 message.send(packet.FromGroupUin, msg, packet.RequestType);
             }
         });
+    }
+}
+
+function mute(packet) {
+    if (packet.SrcMsgSeq === undefined) {
+        var msg = "请使用此指令回复一条消息.";
+        message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+        return false;
+    }
+    var command = packet.Content.match(/(?<=\/)[a-z]{1,10}\s\d{1,10}/i);
+    if (command !== null) {
+        var period = command[0].split(" ")[1];
+    } else {
+        var msg = "请提供参数.";
+        message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+        return false;
+    }
+    if (user.isAdmin(packet.FromUin, packet.FromGroupUin)) {
+        message.mute(packet.FromGroupUin, packet.SrcFromUin, period);
+        var msg = `已禁言用户 <${packet.SrcFromUin}>.`;
+        message.send(packet.FromGroupUin, msg, packet.RequestType);
+    } else {
+        var msg = "您的权限不足.";
+        message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
     }
 }
 
@@ -131,5 +159,6 @@ function scanTextMsg(msg, callback) {
 
 module.exports = {
     init,
-    spamban
+    spamban,
+    mute
 }

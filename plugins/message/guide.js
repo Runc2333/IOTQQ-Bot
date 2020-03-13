@@ -1,5 +1,5 @@
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
 
 module.exports = {
 	init: function () {

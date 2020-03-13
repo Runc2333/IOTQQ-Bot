@@ -30,7 +30,7 @@ function scanTextMsg(msg, callback){
 		"x-acs-signature-nonce": strandom(16),
 		"x-acs-signature-version": "1.0",
 		"x-acs-signature-method": "HMAC-SHA1",
-	}
+	};
 	//准备签名
 	var signature = [];
 	signature.push("POST\n");
@@ -95,4 +95,4 @@ function scanTextMsg(msg, callback){
 
 module.exports = {
 	scanTextMsg
-}
+};

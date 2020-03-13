@@ -1,10 +1,11 @@
 const fs = require("fs");
-const config = require(`${process.cwd()}/controller/configApi.js`);
-const log = require(`${process.cwd()}/controller/logger.js`);
-const message = require(`${process.cwd()}/controller/messageApi.js`);
-const antispam = require(`${process.cwd()}/controller/antispam.js`);
-const groupCommandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
-const superCommandHandler = require(`${process.cwd()}/handler/command/superCommandHandler.js`);
+const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
+const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
+const antispam = require(`${process.cwd().replace(/\\/g, "/")}/controller/antispam.js`);
+const groupCommandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/commandHandler.js`);
+const superCommandHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/command/superCommandHandler.js`);
+const database = require(`${process.cwd().replace(/\\/g, "/")}/controller/database.js`);
 
 function handleTextMsg(packet){
 	if(packet.Content.length > 24){
@@ -51,10 +52,10 @@ function handleTextMsg(packet){
 		return;
 	}
 	if(action !== null){
-		fs.exists(`${process.cwd()}/plugins/message/${action}.js`, function(exists){
+		fs.exists(`${process.cwd().replace(/\\/g, "/")}/plugins/message/${action}.js`, function(exists){
 			if(exists){
 				log.write(`重定向到${action}.js处理`, "GroupMessageHandler", "INFO");
-				const eventHandler = require(`${process.cwd()}/plugins/message/${action}.js`);
+				const eventHandler = require(`${process.cwd().replace(/\\/g, "/")}/plugins/message/${action}.js`);
 				eventHandler.handle(packet);
 			}else{
 				console.log(action);
@@ -63,6 +64,7 @@ function handleTextMsg(packet){
 		});
 	}else{
 		//do something
+		database.saveMessage(packet.FromUin, packet.FromGroupUin, packet.Content, packet.MsgSeq, packet.MsgRandom);
 	}
 }
 
