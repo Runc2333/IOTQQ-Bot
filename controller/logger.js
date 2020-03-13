@@ -15,22 +15,22 @@ function write(msg, event, level = "INFO"){
 		+":"+
 		(date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds())
 	).toString();
-	msg = msg.replace(new RegExp("\\n","gm"), " ");
+	msg = msg.replace(new RegExp("\n","gm"), " ");
 	switch(level){
 		case "INFO":
-			var data = `[${time}] [${level}] [${event}] : ${msg}\\n`;
+			var data = `[${time}] [${level}] [${event}] : ${msg}\n`;
 			break;
 		case "WARNING":
-			var data = `[${time}] [${level}] [${event}] : ${msg}\\n`;
+			var data = `[${time}] [${level}] [${event}] : ${msg}\n`;
 			break;
 		case "ERROR":
-			var data = `[${time}] [${level}] [${event}] : ${msg}\\n`;
+			var data = `[${time}] [${level}] [${event}] : ${msg}\n`;
 			break;
 		default:
-			var data = `[${time}] [${event}] [${level}] : ${msg}\\n`;
+			var data = `[${time}] [${event}] [${level}] : ${msg}\n`;
 			break;
 	}
-	fs.appendFile(`${process.cwd()}/server.log`, data, function(err){
+	fs.appendFileSync(`${process.cwd()}/server.log`, data, function(err){
 		if(err){
 			console.log("无法写入日志.");
 			process.exit(true);

@@ -11,7 +11,7 @@ const systemEventHandler = require(`${process.cwd()}/handler/event/systemEvents.
 log.write("**********************************************", "MAIN THREAD", "INFO");
 log.write("*                QQBot v1.0.0                *", "MAIN THREAD", "INFO");
 log.write("*             Written In Node.js             *", "MAIN THREAD", "INFO");
-log.write("*              Build:2020.03.12              *", "MAIN THREAD", "INFO");
+log.write("*              Build:2020.03.13              *", "MAIN THREAD", "INFO");
 log.write("*              Author: Runc2333              *", "MAIN THREAD", "INFO");
 log.write("**********************************************", "MAIN THREAD", "INFO");
 

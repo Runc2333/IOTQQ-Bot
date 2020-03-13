@@ -1,9 +1,7 @@
 const message = require(`${process.cwd()}/controller/messageApi.js`);
 const config = require(`${process.cwd()}/controller/configApi.js`);
+const user = require(`${process.cwd()}/controller/userApi.js`);
 const log = require(`${process.cwd()}/controller/logger.js`);
-
-const TIMEBOT_IMAGES = config.get("TIMEBOT", "TIMEBOT_IMAGES");
-const ENABLE_TIMEBOT_GROUP = config.get("global", "ENABLE_TIMEBOT_GROUP");
 
 function init() {
 	if (config.get("TIMEBOT") === false) {
@@ -36,7 +34,9 @@ function init() {
 			"CLOCK00": "https://qqbot2.oss-cn-shanghai.aliyuncs.com/12.jpg"
 		};
 		config.write("TIMEBOT", data);
+		log.write("未在配置文件内找到插件配置, 已自动生成默认配置.", "TIMEBOT", "INFO");
 	}
+	config.registerSuperCommand("timebot", "timebot.js", "timebot", "用于开启/关闭TimeBot.\n[state]取值:(enable|disable) => (开启|关闭)", "[state]");
 	sendTimeSticker();
 	log.write("TimeBot已成功加载.", "TIMEBOT", "INFO");
 }
@@ -45,27 +45,71 @@ function sendTimeSticker(){
 	var date = new Date();
 	var minutes = date.getMinutes();
 	var time = date.getTime();
+	var TIMEBOT_IMAGES = config.get("TIMEBOT", "TIMEBOT_IMAGES");
+	var ENABLE_TIMEBOT_GROUP = config.get("TIMEBOT", "ENABLE_TIMEBOT_GROUP");
 	if(minutes == 0){
 		log.write(`${date.getHours()}点了!`, "TIMEBOT", "INFO");
 		var stickerSeq = `CLOCK${date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()}`;
 		var sticker = TIMEBOT_IMAGES[stickerSeq];
-		var seq = 0;
-		var groupId = Array();
+		console.log(ENABLE_TIMEBOT_GROUP);
 		for(i=0;i<ENABLE_TIMEBOT_GROUP.length;i++){
-			groupId.push(ENABLE_TIMEBOT_GROUP[i]);
-			setTimeout(function(){
-				message.sendImage(groupId[seq], sticker);
-				seq++;
-			},i*2000);
+			message.sendImage(ENABLE_TIMEBOT_GROUP[i], sticker);
 		}
 	}
 	var nextFullHour = (Math.ceil(time / 3600000) * 3600000) - time;
-	var nextFullMinute = (Math.ceil(time / 60000)*60000) - time;
-	setTimeout(function(){
-		sendTimeSticker();
-	}, nextFullMinute);
+	var nextFullMinute = (Math.ceil(time / 60000) * 60000) - time;
+	if (nextFullHour < 1000) {
+		setTimeout(function () {
+			sendTimeSticker();
+		}, 60000);
+	} else {
+		setTimeout(function () {
+			sendTimeSticker();
+		}, nextFullHour);
+	}
+	
+}
+
+function timebot(packet) {
+	if (user.isAdmin(packet.FromUin, packet.FromGroupUin)) {
+		var command = packet.Content.match(/(?<=\/)[a-z]{2,10}\s[a-z]{2,10}/i);
+		if (command !== null) {
+			var parameter = command[0].split(" ")[1];
+		} else {
+			var msg = "[TIMEBOT] 未知参数.";
+			message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+			return false;
+		}
+		switch (parameter) {
+			case "enable":
+				var ENABLE_TIMEBOT_GROUP = config.get("TIMEBOT", "ENABLE_TIMEBOT_GROUP");
+				ENABLE_TIMEBOT_GROUP.push(packet.FromGroupUin.toString());
+				config.write("TIMEBOT", ENABLE_TIMEBOT_GROUP, "ENABLE_TIMEBOT_GROUP");
+				var msg = "[TIMEBOT] 已启用.";
+				message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+				break;
+			case "disable":
+				var ENABLE_TIMEBOT_GROUP = config.get("TIMEBOT", "ENABLE_TIMEBOT_GROUP");
+				var index = ENABLE_TIMEBOT_GROUP.indexOf(packet.FromGroupUin.toString());
+				if (index !== -1) {
+					ENABLE_TIMEBOT_GROUP.splice(index, 1);
+				}
+				config.write("TIMEBOT", ENABLE_TIMEBOT_GROUP, "ENABLE_TIMEBOT_GROUP");
+				var msg = "[TIMEBOT] 已禁用.";
+				message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+				break;
+			default:
+				var msg = "[TIMEBOT] 未知参数.";
+				message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+				break;
+		}
+	} else {
+		var msg = "[TIMEBOT] 权限不足.";
+		message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
+	}
 }
 
 module.exports = {
-	init
+	init,
+	timebot
 }

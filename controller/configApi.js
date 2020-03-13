@@ -67,24 +67,36 @@ function registerPlugin(type, regex, handler) {
 			};
 			write("global", config, "MESSAGE_OVERWRITE_COMMAND_REGEX");
 			break;
-		case "supercommand":
-			var config = get("global", "MESSAGE_OVERWRITE_COMMAND_REGEX");
-			// config[] = "";
-			break;
-		case group:
-			var config = get("global", "MESSAGE_GROUP_REGEX");
-			config[handler] = regex.toString();
-			write("global", config, "MESSAGE_GROUP_REGEX");
-			break;
 		default:
 			break;
 	}
-	var sections = { "global": "全局匹配", "command": "命令匹配", "supercommand": "超级命令", "group": "特定群组" };
+	var sections = { "global": "全局匹配", "command": "命令匹配" };
 	log.write(`插件<${handler}>已注册到${sections[type]}.`, "Config API", "INFO");
+}
+
+function registerSuperCommand(command, script, handler, description = "", argument = "") {
+	var config = get("global", "SUPER_COMMAND_REGISTRY");
+	config[command] = {};
+	config[command]["script"] = script;
+	config[command]["handler"] = handler;
+	config[command]["argument"] = argument;
+	config[command]["description"] = description;
+	write("global", config, "SUPER_COMMAND_REGISTRY");
+	log.write(`插件<${script}>已注册超级命令</${command}>.`, "Config API", "INFO");
+}
+
+function registerGroupPlugin(group, regex, handler) {
+	var config = get("global", "MESSAGE_GROUP_REGEX");
+	config[group] = {};
+	config[group][handler] = regex;
+	write("global", config, "MESSAGE_GROUP_REGEX");
+	log.write(`插件<${handler}>已注册到群组<${group}>.`, "Config API", "INFO");
 }
 
 module.exports = {
 	get,
 	write,
-	registerPlugin
+	registerPlugin,
+	registerSuperCommand,
+	registerGroupPlugin
 }

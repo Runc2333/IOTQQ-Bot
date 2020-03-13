@@ -4,13 +4,14 @@ const log = require(`${process.cwd()}/controller/logger.js`);
 const message = require(`${process.cwd()}/controller/messageApi.js`);
 const antispam = require(`${process.cwd()}/controller/antispam.js`);
 const groupCommandHandler = require(`${process.cwd()}/handler/command/commandHandler.js`);
+const superCommandHandler = require(`${process.cwd()}/handler/command/superCommandHandler.js`);
 
 function handleTextMsg(packet){
 	if(packet.Content.length > 24){
 		antispam.scanTextMsg(packet.Content, function(result){
 			if(result !== true){
 				message.revoke(packet.FromGroupUin, packet.MsgSeq, packet.MsgRandom);
-				var msg = `您的信息触发了审计规则.详情:\\n${result}.`;
+				var msg = `您的信息触发了审计规则.详情:\n${result}.`;
 				message.send(packet.FromGroupUin, msg, packet.RequestType, packet.FromUin);
 			}else{
 				//do nothing
@@ -42,6 +43,11 @@ function handleTextMsg(packet){
 		var nameRegexp = eval(`/${BOT_NAME}/g`);
 		var command = packet.Content.replace(nameRegexp, "");
 		groupCommandHandler.handleCommand(command, 2, packet.FromGroupUin, packet.FromUin);
+		return;
+	}
+	if (action === "superCommand") {
+		log.write("重定向superCommandHandler.js处理", "GroupMessageHandler", "INFO");
+		superCommandHandler.handle(packet);
 		return;
 	}
 	if(action !== null){

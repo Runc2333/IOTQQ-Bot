@@ -6,7 +6,6 @@ const log = require(`${process.cwd()}/controller/logger.js`);
 module.exports = {
 	init: function () {
 		config.registerPlugin("global", "/(^{BOT_NAME}$)/", "greeting");
-		config.registerPlugin("command", "/(^{BOT_NAME}$)/", "greeting");
 		if (config.get("GREETING") === false) {
 			var data = {};
 			data["GREETING_STRING"] = ["我在", "在", "欸", "在呢", "什么事？", "一直都在"];

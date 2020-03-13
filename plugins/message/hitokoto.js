@@ -4,8 +4,8 @@ const config = require(`${process.cwd()}/controller/configApi.js`);
 
 module.exports = {
 	init: function () {
-		config.registerPlugin("global", "/(^一言|一言$|hitokoto)/", "greeting");
-		config.registerPlugin("command", "/(^一言|一言$|hitokoto)/", "greeting");
+		config.registerPlugin("global", "/(^一言|一言$|hitokoto)/", "hitokoto");
+		config.registerPlugin("command", "/(^一言|一言$|hitokoto)/", "hitokoto");
 	},
 	handle: function(packet){
 		var url = encodeURI("https://v1.hitokoto.cn/");

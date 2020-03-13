@@ -31,6 +31,26 @@ function getNickname(qqnum, callback){
 	});
 }
 
+function isAdmin(qqnum, group = 0) {
+	var admins = config.get("global", "GROUP_ADMINS");
+	var groupAdmin = admins[eval(group.toString())];
+	if (groupAdmin !== undefined) {
+		if (groupAdmin.indexOf(qqnum.toString()) !== -1) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		if (admins["0"].indexOf(qqnum.toString()) !== -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+}
+
 module.exports = {
-	getNickname
+	getNickname,
+	isAdmin
 }
