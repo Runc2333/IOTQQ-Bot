@@ -11,7 +11,6 @@ git clone https://github.com/Runc2333/QQBot-node.js.git
 
 ```
 cd QQBot-node.js
-
 npm install
 ```
 
@@ -19,7 +18,6 @@ npm install
 
 ```
 vi config/config.example.json
-
 mv config/config.example.json config/config.json
 ```
 
