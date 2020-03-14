@@ -27,8 +27,8 @@ function query(packet) {
     }
     var messages = database.getMessageByUinAndContentAndGuin(queryParameter.uin, packet.FromGroupUin, queryParameter.keyword);
     var start = parseInt(queryParameter.page === "" ? 0 : queryParameter.page);
-    var limit = parseInt(messages.length > start + 10 ? start + 10 : messages.length);
-    var end = parseInt(start + 10 > messages.length - 1 ? messages.length - 1 : start + 9);
+    var limit = parseInt(messages.length > start + 5 ? start + 5 : messages.length);
+    var end = parseInt(start + 5 > messages.length - 1 ? messages.length - 1 : start + 4);
     if ((queryParameter.page == "" ? 0 : parseInt(queryParameter.page) > messages.length) || messages.length == 0) {
         var msg = "在指定的范围和条件内未查询到结果.";
         message.send(packet.FromGroupUin, msg);
@@ -52,7 +52,11 @@ function query(packet) {
         ).toString();
         msg += `[${time}] <${messages[i].uin}>\n${messages[i].content}\n`;
     }
-    if (start + 10 > messages.length - 1) {
+    console.log("limit: " + limit);
+    console.log("start: " + start);
+    console.log("end: " + end);
+    console.log("messages.length: " + messages.length);
+    if (start + 2 > messages.length - 1) {
         //do nothing
     } else {
         msg += `\n若要查看下一页, 请使用/query ${queryParameter.uin} ${queryParameter.keyword == "" ? "<blank>" : queryParameter.keyword} ${end + 1}`;

@@ -63,7 +63,7 @@ function revoke(GroupId, MsgSeq, MsgRandom = 0) {
 	} else {
 		console.log(res.getBody("utf8"));
 		log.write(`错误信息: <${response.Msg}>`, "消息撤回失败", "WARNING");
-		send(GroupId, "[消息撤回失败] Sequency: <${MsgSeq}>.");
+		send(GroupId, `[消息撤回失败] Sequency: <${MsgSeq}>.`);
 		return false;
 	}
 }
