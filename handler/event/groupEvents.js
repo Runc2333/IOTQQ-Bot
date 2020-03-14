@@ -35,6 +35,7 @@ function handle(data){
 					tmp = JSON.parse(currentMsg.Content);
 				}catch(e){
 					log.write("解析 <PicMsg> 时出现问题.", "未能解析消息", "ERROR");
+					return false;
 				}
 				if(tmp.Content != ""){
 					currentMsg.Content = tmp.Content;
@@ -50,7 +51,7 @@ function handle(data){
 					tmp = JSON.parse(currentMsg.Content);
 				}catch(e){
 					log.write("解析 <AtMsg> 时出现问题.", "未能解析消息", "ERROR");
-					break;
+					return false;
 				}
 				if(tmp.UserID == BOT_QQ_NUM){
 					user.getNickname(BOT_QQ_NUM, function(nickname){
@@ -73,6 +74,7 @@ function handle(data){
 					tmp = JSON.parse(currentMsg.Content);
 				}catch(e){
 					log.write("解析 <ReplayMsg> 时出现问题.", "未能解析消息", "ERROR");
+					return false;
 				}
 				if(tmp.UserID == BOT_QQ_NUM){
 					user.getNickname(BOT_QQ_NUM, function(nickname){
