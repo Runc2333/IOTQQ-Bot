@@ -42,8 +42,7 @@ function handle(data){
             });
             break;
         case "ON_EVENT_GROUP_SHUT":
-            log.write(`群聊<${currentEvent.FromGroupUin}> - 用户: <${data.CurrentPacket.EventData.UserID}> 被禁言 <${data.CurrentPacket.EventData.ShutTime}> 秒.`, "成员禁言", "INFO")
-            console.log(JSON.stringify(data, "", "\s"))
+            log.write(`群聊<${currentEvent.FromGroupUin}> - 用户: <${data.CurrentPacket.Data.EventData.UserID}> 被禁言 <${data.CurrentPacket.Data.EventData.ShutTime}> 秒.`, "成员禁言", "INFO")
             break;
         default:
             log.write(currentEvent.EventName, "未知事件", "INFO");
