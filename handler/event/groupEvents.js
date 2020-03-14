@@ -53,7 +53,7 @@ function handle(data){
 					log.write("解析 <AtMsg> 时出现问题.", "未能解析消息", "ERROR");
 					return false;
 				}
-				if(tmp.UserID == BOT_QQ_NUM){
+				if(tmp.UserID == BOT_QQ_NUM && tmp.Content !== undefined){
 					user.getNickname(BOT_QQ_NUM, function(nickname){
 						var regexp = eval(`/@${nickname}/ig`);
 						currentMsg.Content = tmp.Content.replace(regexp, "");
