@@ -59,7 +59,7 @@ function revoke(GroupId, MsgSeq, MsgRandom = 0) {
 	}
 	if (response.Ret == 0) {
 		log.write(`群聊: <${GroupId}>.消息序列号: <${MsgSeq}>`, "消息已撤回", "INFO");
-		send(GroupId, "[消息撤回] Sequency: <${MsgSeq}>.");
+		send(GroupId, `[消息撤回] Sequency: <${MsgSeq}>.`);
 	} else {
 		console.log(res.getBody("utf8"));
 		log.write(`错误信息: <${response.Msg}>`, "消息撤回失败", "WARNING");
