@@ -29,9 +29,9 @@ function handle(data){
             }
             message.send(currentEvent.FromGroupUin, msg, 2, currentEvent.FromUin);
             user.getNickname(currentEvent.FromUin, function (nickname) {
-                gm(`${process.cwd().replace(/\\/g, "/")}/images/welcome.png`).font(`${process.cwd().replace(/\\/g, "/")}/fonts/FZMingSTJW.TTF`, 42).drawText(0, -130, nickname, "Center").toBuffer(function (e, b) {
+                gm(`${process.cwd().replace(/\\/g, "/")}/images/welcome.png`).font(`${process.cwd().replace(/\\/g, "/")}/fonts/FZMingSTJW.TTF`, 42).drawText(0, -140, nickname, "Center").toBuffer(function (e, b) {
                     var tmp = b.toString("base64");
-                    message.sendImageBase64(currentEvent.FromGroupUin, tmp, 1);
+                    message.sendImageBase64(currentEvent.FromGroupUin, tmp, 2);
                 });
             })
             break;
