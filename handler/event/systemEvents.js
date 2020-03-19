@@ -1,3 +1,4 @@
+const gm = require("gm");
 /* Controller */
 const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
 const log = require(`${process.cwd().replace(/\\/g, "/")}/controller/logger.js`);
@@ -26,7 +27,13 @@ function handle(data){
             }else{
                 var msg = welcome["default"];
             }
-            message.send(currentEvent.FromGroupUin, msg, 2,currentEvent.FromUin);
+            message.send(currentEvent.FromGroupUin, msg, 2, currentEvent.FromUin);
+            user.getNickname(currentEvent.FromUin, function (nickname) {
+                gm(`${process.cwd().replace(/\\/g, "/")}/images/welcome.png`).font(`${process.cwd().replace(/\\/g, "/")}/fonts/FZMingSTJW.TTF`, 42).drawText(0, -130, nickname, "Center").toBuffer(function (e, b) {
+                    var tmp = b.toString("base64");
+                    message.sendImageBase64(currentEvent.FromGroupUin, tmp, 1);
+                });
+            })
             break;
         case "ON_EVENT_GROUP_REVOKE":
             currentEvent.MsgSeq = data.CurrentPacket.Data.EventData.MsgSeq;

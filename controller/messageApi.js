@@ -102,6 +102,40 @@ function sendImage(to, picUrl, type = 2, at = 0, groupId = 0) {
 	}
 }
 
+function sendImageBase64(to, picBase64Buf, type = 2, at = 0, groupId = 0) {
+	var data = {};
+	data.toUser = parseFloat(to);
+	data.sendToType = parseFloat(type);
+	data.sendMsgType = "PicMsg";
+	data.content = "";
+	// data.content = at == 0 ? msg : ` ${msg}`;
+	data.groupid = parseFloat(groupId);
+	data.atUser = parseFloat(at);
+	data.picUrl = "";
+	data.picBase64Buf = picBase64Buf;
+	data.fileMd5 = "";
+	// data = JSON.stringify(data);
+	var url = `${config.get("global", "API_ADDRESS")}/v1/LuaApiCaller?qq=${config.get("global", "BOT_QQ_NUM")}&funcname=SendMsg&timeout=10`;
+	var res = request("POST", url, {
+		json: data
+	});
+	try {
+		var response = JSON.parse(res.getBody("utf8"));
+	} catch (e) {
+		console.log(res.getBody("utf8"));
+		log.write("无法解析服务器返回的数据.", "图片发送失败", "WARNING");
+		log.write("请检查后端服务器是否工作正常.", "图片发送失败", "WARNING");
+		return false;
+	}
+	if (response.Ret == 0) {
+		log.write(`送往: <${to}>.`, "图片已送达", "INFO");
+	} else {
+		console.log(res.getBody("utf8"));
+		log.write(`错误信息: <${response.Msg}>`, "图片发送失败", "WARNING");
+		return false;
+	}
+}
+
 function mute(groupId, user, time) {
 	var data = {};
 	data.GroupID = parseFloat(groupId);
@@ -133,5 +167,6 @@ module.exports = {
 	send,
 	revoke,
 	sendImage,
+	sendImageBase64,
 	mute
 }
