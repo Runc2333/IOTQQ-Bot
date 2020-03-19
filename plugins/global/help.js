@@ -13,9 +13,11 @@ function displayHelpInfo(packet) {
         if (SUPER_COMMAND_REGISTRY[key]["argument"] === "") {
             // var placeholder = new Array(key.length + 2).join("-");
             msg += `/${key}\n${SUPER_COMMAND_REGISTRY[key]["description"]}\n\n`;
+            // msg += `/${key}\n${placeholder}\n${SUPER_COMMAND_REGISTRY[key]["description"]}\n\n`;
         } else {
             // var placeholder = new Array((key.length) + (SUPER_COMMAND_REGISTRY[key]["argument"].length) + 3).join("-");
             msg += `/${key} ${SUPER_COMMAND_REGISTRY[key]["argument"]}\n${SUPER_COMMAND_REGISTRY[key]["description"]}\n\n`;
+            // msg += `/${key} ${SUPER_COMMAND_REGISTRY[key]["argument"]}\n${placeholder}\n${SUPER_COMMAND_REGISTRY[key]["description"]}\n\n`;
         }
     }
     msg += "\n[paramater]代表必须参数, 请使用实际值替换, 不需要包含方括号\n<parameter>代表可选参数, 请使用实际值替换, 不需要包含尖括号.";

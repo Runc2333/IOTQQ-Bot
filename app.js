@@ -11,6 +11,7 @@ const io = require("socket.io-client");
 const fs = require("fs");
 const config = require(`${process.cwd().replace(/\\/g, "/")}/controller/configApi.js`);
 const database = require(`${process.cwd().replace(/\\/g, "/")}/controller/database.js`);
+const message = require(`${process.cwd().replace(/\\/g, "/")}/controller/messageApi.js`);
 /* Events Handler */
 const groupEventHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/event/groupEvents.js`);
 const friendEventHandler = require(`${process.cwd().replace(/\\/g, "/")}/handler/event/friendEvents.js`);
@@ -59,7 +60,14 @@ socket.on("OnEvents", function(data){
 
 /* 程序退出事件 */
 process.on("exit", (code) => {
+	message.send(config.get("global", "GROUP_ADMINS")["0"][0], `进程正在退出, 请检查程序状态.`, 1);
 	log.write("正在退出进程...", "进程结束", "INFO");
+});
+
+/* 捕获异常 */
+process.on("uncaughtException", function (err) {
+	console.log(`Caught exception: ${err}`);
+	message.send(config.get("global", "GROUP_ADMINS")["0"][0], `捕获到异常, 请尽快查看日志.错误详情: \n${err}`, 1);
 });
 
 /* 加载插件 */
