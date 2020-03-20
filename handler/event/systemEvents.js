@@ -28,10 +28,13 @@ function handle(data){
                 var msg = welcome["default"];
             }
             message.send(currentEvent.FromGroupUin, msg, 2, currentEvent.FromUin);
+            //发送滥权之家表情包
             user.getNickname(currentEvent.FromUin, function (nickname) {
-                gm(`${process.cwd().replace(/\\/g, "/")}/images/welcome.png`).font(`${process.cwd().replace(/\\/g, "/")}/fonts/FZMingSTJW.TTF`, 42).drawText(0, -140, nickname, "Center").resize(250, 191, "!").toBuffer(function (e, b) {
+                gm(`${process.cwd().replace(/\\/g, "/")}/images/welcome.png`).font(`${process.cwd().replace(/\\/g, "/")}/fonts/FZMingSTJW.TTF`, 42).drawText(0, -140, `你好, ${nickname}`, "Center").resize(250, 191, "!").toBuffer(function (e, b) {
                     var tmp = b.toString("base64");
-                    message.sendImageBase64(currentEvent.FromGroupUin, tmp, 2);
+                    setTimeout(function () {
+                        message.sendImageBase64(currentEvent.FromGroupUin, tmp, 2);
+                    }, 1000);
                 });
             })
             break;
